@@ -17,6 +17,8 @@
 		53765A0E2578BB4400FD45F4 /* GithubUserListTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53765A0D2578BB4400FD45F4 /* GithubUserListTests.swift */; };
 		53765A192578BB4400FD45F4 /* GithubUserListUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53765A182578BB4400FD45F4 /* GithubUserListUITests.swift */; };
 		53765A392578ED2600FD45F4 /* GithubUsersListController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53765A382578ED2600FD45F4 /* GithubUsersListController.swift */; };
+		53B3969F2578FAB500983FF2 /* GitUsers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53B3969E2578FAB500983FF2 /* GitUsers.swift */; };
+		53B396A72578FD3200983FF2 /* GitAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53B396A62578FD3200983FF2 /* GitAPI.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,6 +55,8 @@
 		53765A182578BB4400FD45F4 /* GithubUserListUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GithubUserListUITests.swift; sourceTree = "<group>"; };
 		53765A1A2578BB4400FD45F4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		53765A382578ED2600FD45F4 /* GithubUsersListController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GithubUsersListController.swift; sourceTree = "<group>"; };
+		53B3969E2578FAB500983FF2 /* GitUsers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitUsers.swift; sourceTree = "<group>"; };
+		53B396A62578FD3200983FF2 /* GitAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitAPI.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -135,6 +139,8 @@
 		53765A292578BB6600FD45F4 /* DataModel */ = {
 			isa = PBXGroup;
 			children = (
+				53B3969A2578F10600983FF2 /* APIs */,
+				53B396992578F0F500983FF2 /* Objects */,
 				537659FC2578BB4300FD45F4 /* GithubUserList.xcdatamodeld */,
 			);
 			path = DataModel;
@@ -164,6 +170,22 @@
 				53765A382578ED2600FD45F4 /* GithubUsersListController.swift */,
 			);
 			path = Controllers;
+			sourceTree = "<group>";
+		};
+		53B396992578F0F500983FF2 /* Objects */ = {
+			isa = PBXGroup;
+			children = (
+				53B3969E2578FAB500983FF2 /* GitUsers.swift */,
+			);
+			path = Objects;
+			sourceTree = "<group>";
+		};
+		53B3969A2578F10600983FF2 /* APIs */ = {
+			isa = PBXGroup;
+			children = (
+				53B396A62578FD3200983FF2 /* GitAPI.swift */,
+			);
+			path = APIs;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -296,7 +318,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				53B396A72578FD3200983FF2 /* GitAPI.swift in Sources */,
 				537659F82578BB4300FD45F4 /* ViewController.swift in Sources */,
+				53B3969F2578FAB500983FF2 /* GitUsers.swift in Sources */,
 				537659FE2578BB4300FD45F4 /* GithubUserList.xcdatamodeld in Sources */,
 				53765A392578ED2600FD45F4 /* GithubUsersListController.swift in Sources */,
 				537659F42578BB4300FD45F4 /* AppDelegate.swift in Sources */,
