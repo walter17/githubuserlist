@@ -6,25 +6,33 @@
 //
 
 import Foundation
+import CoreData
 
-// Class Object for Github User Information
-class GitUsers: NSObject {
-    var txtLoginName: String!
-    var intUserId: Int!
-    var txtNodeId: String!
+// Class Object for Github Users Information
+class GitUsers: Codable {
+    var txtLogin: String!
     var txtAvatarURL: String!
-    var txtGravatarId: String!
-    var txtURL: String!
     var txtHTMLUrl: String!
-    var txtFollowersURL: String!
-    var txtLFollowingURL: String!
-    var txtGistsURL: String!
-    var txtStarredURL: String!
-    var txtSubsURL: String!
-    var txtOrgURL: String!
-    var txtReposURL: String!
-    var txtEventsURL: String!
-    var txtReceivedEventsURL: String!
-    var txtUserType: String!
-    var txtSiteAdmin: Bool!
+    var isSiteAdmin: Bool!
+    
+    enum GitUsers: String, CodingKey
+    {
+        case login, site_admin, avatar_url, html_url
+    }
+    
+    
+    required init (from decoder: Decoder) throws {
+        let container =  try decoder.container (keyedBy: GitUsers.self)
+        txtLogin = try container.decode (String.self, forKey: .login)
+        txtAvatarURL = try container.decode (String.self, forKey: .avatar_url)
+        txtHTMLUrl = try container.decode (String.self, forKey: .html_url)
+        isSiteAdmin = try container.decode (Bool.self, forKey: .site_admin)
+    }
+    
+    
+   
+
+    
 }
+
+

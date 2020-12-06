@@ -7,8 +7,21 @@
 
 import UIKit
 
-class GithubUsersListController: UITableViewController {
+// Custom Class of TableViewCell
+class GithubUserTableCell: UITableViewCell {
+    @IBOutlet weak var UserImg: UIImageView!
+    @IBOutlet weak var lblTitle: UILabel!
+    @IBOutlet weak var lblDetail: UILabel!
+    @IBOutlet weak var imgStatsIcon: UIImageView!
+}
 
+class GithubUsersListController: UITableViewController {
+    private var gitUsers: Array<GitUsers>?
+    private var apiError: NSError?
+    private var listPage: Int?
+    private var selectedUser: GitUsers?
+    private var loadingOnFooterView: UIActivityIndicatorView?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -17,77 +30,104 @@ class GithubUsersListController: UITableViewController {
 
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
+        listPage = 0 // Start with Page 0
+        
+        loadingOnFooterView = UIActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: tableView.frame.size.width, height: 50)) // Initiate activity indicator
+        
+        reloadPage() // Initial call
+        
     }
 
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
-        return 3
+        return 1
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return 3
+        return self.gitUsers?.count ?? 0
     }
 
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "UsersCell", for: indexPath)
-
-            cell.textLabel?.text = "Section \(indexPath.section) Row \(indexPath.row)"
-
-
+        let cellValue = self.gitUsers?[indexPath.row]
+        let cell = tableView.dequeueReusableCell(withIdentifier: "UsersCell", for: indexPath) as! GithubUserTableCell
+        
+        cell.lblTitle?.text = cellValue?.txtLogin ?? ""
+        cell.lblDetail?.text = cellValue?.txtHTMLUrl ?? ""
+        
+        if (!(cellValue?.isSiteAdmin)!) {
+            cell.imgStatsIcon.isHidden = true
+        }
+        // Load url to imageview
+        GitAPI.loadFrom(url: URL(string: cellValue?.txtAvatarURL ?? "")!) { image in
+            cell.UserImg.image = image
+        }
+        
         return cell
     }
-
-    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return "Section \(section)"
+    
+    
+    
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 75
     }
     
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
+    override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        
+        let totalRows = self.gitUsers!.count
+        let currentRow : Int = indexPath.row
+        
+        if(currentRow >= totalRows - 4){
+            self.loadingOnFooterView?.startAnimating()
+            listPage = listPage! + 1
+            reloadPage()
+        }
+        else{
+            self.loadingOnFooterView?.stopAnimating()
+        }
     }
-    */
-
-    /*
-    // Override to support editing the table view.
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
+    
+    
+    override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        return self.loadingOnFooterView
     }
-    */
 
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
+    override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return 50
     }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
+    
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        self.selectedUser = self.gitUsers?[indexPath.row]
+        self.performSegue(withIdentifier: "ShowProfile", sender: self)
     }
-    */
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?){
+        if segue.identifier == "ShowProfile" {
+            let controller = segue.destination as! GithubUserProfileViewController
+            controller.githubUsername = selectedUser?.txtLogin
+               
+            
+        }
     }
-    */
+    // Functions
+    // Retrieve Github Users to List
+   func reloadPage(){
+        GitAPI().fetchGithubUsers(page: self.listPage!) { [weak self] (apiGitUsers, apiErrorThrow) in
+            
+            // Store mutated values over a variable
+            var mutArr: Array<GitUsers> = self?.gitUsers ?? []
+            mutArr.append(contentsOf: apiGitUsers) // Run append
+            
+            self?.gitUsers = mutArr
+            self?.apiError = apiErrorThrow
+            DispatchQueue.main.async {
+              self?.tableView.reloadData()
+            }
+          }
+    }    
 
 }
